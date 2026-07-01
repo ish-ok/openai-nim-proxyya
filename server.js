@@ -6,6 +6,9 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 7860;
 
+// Helper function to create a delay
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '100mb' }));
@@ -31,7 +34,6 @@ const MODEL_MAPPING = {
   'claude-3-sonnet': 'deepseek-ai/deepseek-v4-flash',
   'gemini-pro': 'qwen/qwen3-next-80b-a3b-thinking' 
 };
-
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -61,6 +63,10 @@ app.get('/v1/models', (req, res) => {
 // Chat completions endpoint (main proxy)
 app.post('/v1/chat/completions', async (req, res) => {
   try {
+    // ⏱️ FLATTEN PEAKS: Force a 4000ms delay to enforce a safe RPM threshold
+    console.log(`[Rate-Limiter] Enforcing a 4000ms pause before hitting NVIDIA NIM API...`);
+    await sleep(4000);
+
     const { model, messages, temperature, max_tokens, stream } = req.body;
     
     // Smart model selection with fallback
