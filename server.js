@@ -65,7 +65,7 @@ app.post('/v1/chat/completions', async (req, res) => {
   try {
     // ⏱️ FLATTEN PEAKS: Force a 4000ms delay to enforce a safe RPM threshold
     console.log(`[Rate-Limiter] Enforcing a 4000ms pause before hitting NVIDIA NIM API...`);
-    await sleep(4000);
+    await sleep(4350);
 
     const { model, messages, temperature, max_tokens, stream } = req.body;
     
@@ -104,7 +104,7 @@ app.post('/v1/chat/completions', async (req, res) => {
       model: nimModel,
       messages: messages,
       temperature: temperature || 0.6,
-      max_tokens: max_tokens || 9024,
+      max_tokens: max_tokens || 4096,
       extra_body: ENABLE_THINKING_MODE ? { chat_template_kwargs: { thinking: true } } : undefined,
       stream: stream || false
     };
