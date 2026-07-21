@@ -60,8 +60,8 @@ app.get('/v1/models', (req, res) => {
   });
 });
 
-// Chat completions endpoint (main proxy)
-app.post('/v1/chat/completions', async (req, res) => {
+// Chat completions endpoint (handles root rewrites + standard paths)
+app.post(['/v1/chat/completions', '/chat/completions', '/'], async (req, res) => {
   try {
     // ⏱️ FLATTEN PEAKS: Force a 4000ms delay to enforce a safe RPM threshold
     console.log(`[Rate-Limiter] Enforcing a 4000ms pause before hitting NVIDIA NIM API...`);
